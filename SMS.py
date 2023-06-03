@@ -23,5 +23,3 @@ if st.button("Send SMS"):
 
     # Display the message SID
     st.success("SMS sent successfully! Message SID: {}".format(message.sid))
-if __name__ == '__main__':
-    main()
