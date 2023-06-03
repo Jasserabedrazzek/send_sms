@@ -1,32 +1,27 @@
-import requests
 import streamlit as st
+from twilio.rest import Client
 
-# Nexmo API credentials
-NEXMO_API_KEY = 'a477b9ce'
-NEXMO_API_SECRET = 'tS32uKc1ZdKQ5hZF'
-NEXMO_PHONE_NUMBER = '21627692361'
 
-# Streamlit UI
-st.title("Send SMS")
-recipient = st.text_input("Recipient Phone Number")
-message = st.text_area("Message")
-submit = st.button("Send")
+st.title("SMS Sender")
 
-# Function to send SMS
-def send_sms(api_key, api_secret, phone_number, recipient, message):
-    url = f'https://rest.nexmo.com/sms/json?api_key={api_key}&api_secret={api_secret}&from={phone_number}&to={recipient}&text={message}'
-    response = requests.get(url)
-    data = response.json()
-    return data
+account_sid = "ACcb2dd042df686a03ed1507464a43cbc3"
+auth_token = '3408a5e648b334ec1acf8c160faa569e'
+from_number = '+12053016406'
+to_number = st.text_input("Recipient Phone Number")
+message_body = st.text_area("Message Body")
 
-# Handle form submission
-if submit:
-    if not recipient or not message:
-        st.warning("Please enter recipient phone number and message.")
-    else:
-        result = send_sms(NEXMO_API_KEY, NEXMO_API_SECRET, NEXMO_PHONE_NUMBER, recipient, message)
-        if 'messages' in result and result['messages'][0]['status'] == '0':
-            st.success("SMS sent successfully.")
-        else:
-            st.error("Failed to send SMS.")
+if st.button("Send SMS"):
+    # Create a Twilio client instance
+    client = Client(account_sid, auth_token)
 
+    # Send the SMS
+    message = client.messages.create(
+        body=message_body,
+        from_=from_number,
+        to=to_number
+    )
+
+    # Display the message SID
+    st.success("SMS sent successfully! Message SID: {}".format(message.sid))
+if __name__ == '__main__':
+    main()
